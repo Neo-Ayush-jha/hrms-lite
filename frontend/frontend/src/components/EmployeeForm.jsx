@@ -9,9 +9,11 @@ export default function EmployeeForm({ refresh }) {
     email: "",
     department: "",
   });
+  const [loading, setLoading] = useState(false);
 
   const submit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
       await api.post("employees/", form);
       toast.success("Employee added");
@@ -19,6 +21,8 @@ export default function EmployeeForm({ refresh }) {
       refresh();
     } catch (err) {
       toast.error("Failed to add employee");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -53,8 +57,20 @@ export default function EmployeeForm({ refresh }) {
           required
         />
 
-        <button className="bg-blue-600 text-white px-4 py-2 rounded flex items-center gap-2">
-          <UserPlus size={16} /> Add
+        <button 
+          disabled={loading}
+          className="bg-blue-600 text-white px-4 py-2 rounded flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {loading ? (
+            <>
+              <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
+              Loading...
+            </>
+          ) : (
+            <>
+              <UserPlus size={16} /> Add
+            </>
+          )}
         </button>
       </form>
     </div>
